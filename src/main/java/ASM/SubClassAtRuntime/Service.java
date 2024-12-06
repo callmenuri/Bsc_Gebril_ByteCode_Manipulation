@@ -1,9 +1,7 @@
-package ByteBuddy.SubClassAtRunntime;
-
-
+package ASM.SubClassAtRuntime;
 public class Service {
     @Secured(user = "ADMIN")
     public void deleteEverything() {
-        System.out.println("Deleting everything...");
+        System.out.println("Deleting everything...ASM");
     }
 }
