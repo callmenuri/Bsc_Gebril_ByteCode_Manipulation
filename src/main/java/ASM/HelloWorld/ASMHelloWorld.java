@@ -6,16 +6,20 @@ import org.objectweb.asm.ClassWriter;
 
         import static org.objectweb.asm.Opcodes.*;
 
+/**
+ * ASMHelloWorld erstellt dynamisch eine Java-Klasse zur Laufzeit mithilfe der ASM-Bibliothek, einer Bytecode-Manipulationsbibliothek.
+ */
 public class ASMHelloWorld {
 
     public static void main(String[] args) throws Exception {
         // Klasse mit ASM erstellen
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-
+        //COMPUTE_FRAMES | COMPUTE_MAXS: Flags, die ASM anweisen, automatisch die Stack-Frames und die maximale Stapelgröße zu berechnen.
         String className = "HelloWorldGenerated";
         String classInternalName = className.replace('.', '/');
 
         // Define class header
+        //"java/lang/Object" internal name of the Class
         classWriter.visit(V1_8, ACC_PUBLIC, classInternalName, null, "java/lang/Object", null);
 
         // Erzeuge den Standard-Konstruktor

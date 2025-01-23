@@ -7,18 +7,34 @@ import net.bytebuddy.matcher.ElementMatchers;
 
 import java.util.function.Function;
 
+import static net.bytebuddy.matcher.ElementMatchers.named;
+
 public class ByteBuddyHelloWorld {
 
     public static void main(String[] args) throws Exception {
 
         Class<?> dynamicType = new ByteBuddy()
                 .subclass(Object.class)
-                .method(ElementMatchers.named("toString"))
+                .method(named("toString"))
                 .intercept(FixedValue.value("Hello World!"))
                 .make()
                 .load(ByteBuddyHelloWorld.class.getClassLoader())
                 .getLoaded();
 
+        Class<?> test = new ByteBuddy()
+                .subclass(TestCase.class)
+                .name("example.Type")
+                .method(named("test")).intercept(FixedValue.value("Hello World!"))
+                .make()
+                .load(ByteBuddyHelloWorld.class.getClassLoader())
+                .getLoaded()
+                .newInstance()
+                .toString().getClass();
+
+
         System.out.println(dynamicType.newInstance().toString());
     }
 }
+
+
+
