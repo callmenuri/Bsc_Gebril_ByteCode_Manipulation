@@ -1,5 +1,6 @@
 package ByteBuddy.ClasseDepth;
-import ReusableClasses.HierarchyResult;
+import Shared.HierarchyResult;
+import Shared.SharedConstants;
 import net.bytebuddy.pool.TypePool;
 import net.bytebuddy.description.type.TypeDescription;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public class CustomClassAnalysis {
     public static void main(String[] args) {
         // name of the class to be analysed
-        String customClassName = "ReusableClasses.ClassDepthAnalysis.CustomClass";
+        String customClassName = SharedConstants.CUSTOM_CLASS_NAME;
 
         // Vererbungshierarchie analysieren
         HierarchyResult result = getInheritanceHierarchy(customClassName);
@@ -22,6 +23,10 @@ public class CustomClassAnalysis {
         System.out.println("Klassentiefe: " + result.getDepth());
     }
 
+    /**
+     * @param className name of the ClassPath to be analysed
+     * @return HierarchyResult that holds the hierarchy on form of the inherited ClassNames and the depth +1 (starts from Object)
+     */
     public static HierarchyResult getInheritanceHierarchy(String className) {
         List<String> hierarchy = new ArrayList<>();
         int depth = 0;
@@ -37,7 +42,7 @@ public class CustomClassAnalysis {
             // Starte mit der aktuellen Klasse
             TypeDescription currentType = resolution.resolve();
 
-            // Vererbungshierarchie durchlaufen
+
             while (currentType != null) {
                 hierarchy.add(currentType.getName());
                 currentType = currentType.getSuperClass() != null

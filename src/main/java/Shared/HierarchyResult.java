@@ -1,7 +1,10 @@
-package ReusableClasses;
+package Shared;
 
 import java.util.List;
 
+/**
+ * Wrapper-Class wich holds the hierarchy of a class and depth-of-hierarchy starting from Object
+ */
 public class HierarchyResult {
     private final List<String> hierarchy;
     private final int depth;

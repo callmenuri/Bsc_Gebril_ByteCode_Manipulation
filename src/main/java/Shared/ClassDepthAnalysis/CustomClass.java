@@ -1,4 +1,4 @@
-package ReusableClasses.ClassDepthAnalysis;
+package Shared.ClassDepthAnalysis;
 
 public class CustomClass extends IntermediateClass{
 }
