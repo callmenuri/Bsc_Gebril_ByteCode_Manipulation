@@ -11,14 +11,12 @@ public class ComplexityAnalyzer {
         // Pfad zur Klasse oder JAR-Datei
         String className = SharedConstants.COMPLEXITY_TEST_CLASS;
 
-        // ASM ClassReader erstellt
         ClassReader classReader = new ClassReader(className);
 
         // ClassVisitor registrieren
         classReader.accept(new ClassVisitor(Opcodes.ASM9) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-                // Für jede Methode ein MethodVisitor erstellen
                 return new MethodVisitor(Opcodes.ASM9) {
                     int branchCount = 0;
 

@@ -61,7 +61,6 @@ public class ComplexityTestClass {
 
     public static void main(String[] args) {
         ComplexityTestClass test = new ComplexityTestClass();
-
         // Aufrufen der Methoden
         test.simpleMethod();
         test.ifElseMethod(15);

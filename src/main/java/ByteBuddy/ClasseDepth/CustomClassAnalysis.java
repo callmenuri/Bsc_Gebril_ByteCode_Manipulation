@@ -30,18 +30,17 @@ public class CustomClassAnalysis {
     public static HierarchyResult getInheritanceHierarchy(String className) {
         List<String> hierarchy = new ArrayList<>();
         int depth = 0;
-        TypePool typePool = TypePool.Default.ofSystemLoader(); // Lädt Klassen aus dem Classpath
+        //Loading Class from Classpath
+        TypePool typePool = TypePool.Default.ofSystemLoader();
 
         try {
-            // Klasse im TypePool suchen
+            // Looking for Class in Class Pool
             TypePool.Resolution resolution = typePool.describe(className);
             if (!resolution.isResolved()) {
                 throw new IllegalArgumentException("Klasse nicht gefunden: " + className);
             }
-
-            // Starte mit der aktuellen Klasse
+            // Starts with current Class
             TypeDescription currentType = resolution.resolve();
-
 
             while (currentType != null) {
                 hierarchy.add(currentType.getName());
@@ -50,6 +49,7 @@ public class CustomClassAnalysis {
                         : null;
                 depth++;
             }
+
         } catch (Exception e) {
             throw new RuntimeException("Fehler beim Analysieren der Klasse: " + className, e);
         }

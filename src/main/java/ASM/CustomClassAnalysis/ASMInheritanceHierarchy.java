@@ -30,38 +30,35 @@ public class ASMInheritanceHierarchy {
         List<String> hierarchy = new ArrayList<>();
         int depth = 0;
 
-        String currentClass = className.replace('.', '/'); // ASM verwendet "/" statt "." in Klassennamen
+        String currentClass = className.replace('.', '/');
 
-        // Iteriere durch die Vererbungshierarchie
+        //Iteration of class
         while (currentClass != null) {
-            hierarchy.add(currentClass.replace('/', '.')); // Konvertiere wieder zu Java-Punkt-Notation
+            hierarchy.add(currentClass.replace('/', '.'));
             depth++;
-
-            // Lese die aktuelle Klasse mit ASM
+            // Reading current class
             ClassReader classReader = new ClassReader(currentClass);
-
-            // Visitor, um die Superklasse zu finden
+            // Super Class Visitor
             SuperClassVisitor visitor = new SuperClassVisitor();
             classReader.accept(visitor, 0);
-
-            // Superklasse für die nächste Iteration
+            // Set Superclass for next Iteration
             currentClass = visitor.getSuperClass();
         }
 
         return new HierarchyResult(hierarchy, depth);
     }
 
-    // Custom ClassVisitor, um die Superklasse auszulesen
+    // Custom ClassVisitor for finding the Superclass
     private static class SuperClassVisitor extends ClassVisitor {
         private String superClass;
 
         public SuperClassVisitor() {
-            super(Opcodes.ASM9); // Aktuelle ASM-Version
+            super(Opcodes.ASM9);
         }
 
         @Override
         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            this.superClass = superName; // Speichere den Namen der Superklasse
+            this.superClass = superName;
         }
 
         public String getSuperClass() {

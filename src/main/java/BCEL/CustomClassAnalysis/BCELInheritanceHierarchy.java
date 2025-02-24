@@ -16,10 +16,9 @@ public class BCELInheritanceHierarchy {
         String customClassName = SharedConstants.CUSTOM_CLASS_NAME;
 
         try {
-            // Vererbungshierarchie und Tiefe berechnen
+            // Calculate Depth
             HierarchyResult result = getInheritanceHierarchy(customClassName);
 
-            // Ergebnisse ausgeben
             System.out.println("Vererbungshierarchie von " + customClassName + ":");
             for (String cls : result.getHierarchy()) {
                 System.out.println(cls);
@@ -36,10 +35,8 @@ public class BCELInheritanceHierarchy {
 
         String currentClass = className.replace('.', '/'); // BCEL verwendet "/" statt "." in Klassennamen
 
-        // ClassLoader für BCEL initialisieren
-        while (currentClass != null && !currentClass.equals("java/lang/Object")) {
-            // Lade die Klasse mit BCEL
-            // Versuche, die Klasse mit dem ClassLoader zu laden
+        while (currentClass != null) {
+
             InputStream inputStream = Thread .currentThread()
                     .getContextClassLoader()
                     .getResourceAsStream(currentClass + ".class");
@@ -49,17 +46,12 @@ public class BCELInheritanceHierarchy {
             }
             ClassParser parser = new ClassParser(inputStream, currentClass);
             JavaClass javaClass = parser.parse();
-            // Füge die aktuelle Klasse zur Hierarchie hinzu
+
             hierarchy.add(javaClass.getClassName());
             depth++;
 
-            // Superklasse für die nächste Iteration
-            currentClass = javaClass.getSuperclassName().replace('.', '/'); // BCEL gibt die Superklasse in Punkt-Notation zurück
+            currentClass = javaClass.getSuperclassName().replace('.', '/');
         }
-
-        // Wurzelklasse hinzufügen
-        hierarchy.add("java.lang.Object");
-
         return new HierarchyResult(hierarchy, depth);
     }
 }

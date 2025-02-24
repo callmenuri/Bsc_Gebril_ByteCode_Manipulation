@@ -59,45 +59,52 @@ public class Main {
         InstructionList il = methodGen.getInstructionList();
         InstructionFactory factory = new InstructionFactory(classGen, cp);
 
-        // 1. Startzeit speichern
-        il.insert(new PUSH(cp, System.currentTimeMillis()));
-        il.insert(factory.createStore(Type.LONG, methodGen.getMaxLocals())); // Speicherplatz für Startzeit
+        int startTimeIndex = methodGen.getMaxLocals(); // Neuer lokaler Speicherort für Startzeit
+        methodGen.setMaxLocals(startTimeIndex + 2); // Platz für LONG-Wert
 
-        // 2. Endzeit berechnen und ausgeben
+        // 1. Startzeit vor der ersten Anweisung speichern
+        InstructionList startTimeLogic = new InstructionList();
+        startTimeLogic.append(new PUSH(cp, System.currentTimeMillis()));
+        startTimeLogic.append(factory.createStore(Type.LONG, startTimeIndex));
+        il.insert(startTimeLogic);
+
+        // 2. Endzeit nach der Rückkehr berechnen und ausgeben
         for (InstructionHandle handle : il.getInstructionHandles()) {
             if (handle.getInstruction() instanceof ReturnInstruction) {
-                InstructionList timing = new InstructionList();
-                timing.append(factory.createFieldAccess("java.lang.System", "out",
+                InstructionList endTimeLogic = new InstructionList();
+                endTimeLogic.append(factory.createFieldAccess("java.lang.System", "out",
                         new ObjectType("java.io.PrintStream"), Constants.GETSTATIC));
-                timing.append(factory.createLoad(Type.LONG, methodGen.getMaxLocals()));
-                timing.append(new PUSH(cp, System.currentTimeMillis()));
-                timing.append(factory.createInvoke("java.io.PrintStream", "println",
+                endTimeLogic.append(factory.createLoad(Type.LONG, startTimeIndex)); // Startzeit laden
+                endTimeLogic.append(new PUSH(cp, System.currentTimeMillis()));      // Aktuelle Zeit
+                endTimeLogic.append(factory.createInvoke("java.lang.System", "currentTimeMillis",
+                        Type.LONG, Type.NO_ARGS, Constants.INVOKESTATIC));
+                endTimeLogic.append(InstructionConstants.LSUB); // Endzeit - Startzeit
+                endTimeLogic.append(factory.createInvoke("java.io.PrintStream", "println",
                         Type.VOID, new Type[]{Type.LONG}, Constants.INVOKEVIRTUAL));
-
-                il.insert(handle, timing);
+                il.insert(handle, endTimeLogic);
             }
         }
 
-        // 3. Entfernen ungültiger Attribute
-        removeInvalidAttributes(methodGen);
+        updateStackMapTable(methodGen);
+
 
         // 4. Max Stack und Max Locals aktualisieren
-        updateMaxStackAndLocals(methodGen);
+        methodGen.setMaxStack();
+        methodGen.setMaxLocals();
 
-        // 5. Transformierte Methode ersetzen
+        // 6. Methode ersetzen
         classGen.replaceMethod(method, methodGen.getMethod());
     }
-    private static void removeInvalidAttributes(MethodGen methodGen) {
-        Attribute[] attributes = methodGen.getMethod().getAttributes();
-        for (Attribute attr : attributes) {
-            if (attr instanceof Unknown) { // Unbekannte oder nicht benötigte Attribute entfernen
-                methodGen.removeAttribute(attr);
-            }
-        }
+
+    private static void updateStackMapTable(MethodGen methodGen) {
+        // Positionen im InstructionList festlegen
+        methodGen.getInstructionList().setPositions();
+
+        // StackMapTable neu berechnen
+        methodGen.removeCodeAttributes();
+        methodGen.setMaxLocals();
+        methodGen.setMaxStack();
     }
-    private static void updateMaxStackAndLocals(MethodGen methodGen) {
-        methodGen.setMaxStack(); // Berechnet die benötigte maximale Stackgröße
-        methodGen.setMaxLocals(); // Aktualisiert die Anzahl der lokalen Variablen
-    }
+
 
 }
