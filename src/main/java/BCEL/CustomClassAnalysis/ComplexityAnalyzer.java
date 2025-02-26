@@ -49,7 +49,6 @@ public class ComplexityAnalyzer {
         for (InstructionHandle handle : instructionList.getInstructionHandles()) {
             Instruction instruction = handle.getInstruction();
 
-            // Prüfen, ob die Instruktion eine Verzweigung ist
             if (instruction instanceof IfInstruction ||
                     instruction instanceof GotoInstruction ||
                     instruction instanceof Select) { // Select deckt switch-Anweisungen ab
