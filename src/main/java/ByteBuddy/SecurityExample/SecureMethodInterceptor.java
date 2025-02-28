@@ -14,10 +14,8 @@ public class SecureMethodInterceptor {
     public static class SecurityCheck {
         @Advice.OnMethodEnter
         static void checkAccess(@Advice.Origin Method method) {
-            if (method.isAnnotationPresent(Secure.class)) {
-                if (!UserSession.hasAccess()) {
-                    throw new SecurityException("Zugriff verweigert für " + method.getName());
-                }
+            if (!UserSession.hasAccess()) {
+                throw new SecurityException("Zugriff verweigert für " + method.getName());
             }
         }
     }
