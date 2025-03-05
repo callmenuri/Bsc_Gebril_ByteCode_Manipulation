@@ -24,7 +24,6 @@ public class SecureMethodTransformer extends ClassVisitor {
                     return new AnnotationVisitor(ASM9, super.visitAnnotation(descriptor, visible)) {
                         @Override
                         public void visitEnd() {
-                            // Methode ist annotiert mit @Secure -> Füge Sicherheitsprüfung hinzu
                             injectSecurityCheck();
                         }
                     };

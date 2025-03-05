@@ -31,7 +31,7 @@ public class SecureClassModifierBCEL extends ClassLoader {
                 il.append(factory.createInvoke("Shared.SecurityExample.UserSession", "hasAccess",
                         Type.BOOLEAN, new Type[]{}, Constants.INVOKESTATIC));
 
-                // Falls `hasAccess()` false ist, werfe eine SecurityException
+                // Falls hasAccess()` false ist, werfe eine SecurityException
                 il.append(new IFNE(null));
                 il.append(factory.createNew("java.lang.SecurityException"));
                 il.append(InstructionConstants.DUP);
