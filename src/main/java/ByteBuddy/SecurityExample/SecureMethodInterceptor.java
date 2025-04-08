@@ -28,6 +28,7 @@ public class SecureMethodInterceptor {
                 .type(ElementMatchers.any())
                 .transform((builder, typeDescription, classLoader, module, protectionDomain) ->
                         builder.visit(Advice.to(SecurityCheck.class)
+                                //Change .named("Method name").and(takesArguments(1))
                                 .on(ElementMatchers.isAnnotatedWith(Secure.class))))
                 .installOnByteBuddyAgent();
 
