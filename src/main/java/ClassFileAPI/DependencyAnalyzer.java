@@ -1,12 +1,9 @@
 package ClassFileAPI;
-
 import java.io.IOException;
 import java.lang.classfile.*;
-import java.lang.classfile.attribute.CodeAttribute;
 import java.lang.classfile.constantpool.ClassEntry;
 import java.lang.classfile.instruction.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +31,27 @@ public class DependencyAnalyzer {
                 for (CodeElement e : code.elementList()) {
                     switch (e) {
                         case FieldInstruction f -> deps.add(f.owner().asInternalName());
-                        case InvokeInstruction i -> deps.add(i.owner().asInternalName());
+                        case InvokeInstruction i -> {
+                            switch (i.opcode()) {
+                                case INVOKEVIRTUAL -> {
+                                    System.out.println("INVOKEVIRTUAL: " + i.owner().asInternalName());
+                                    deps.add(i.owner().asInternalName());
+                                }
+                                case INVOKESTATIC -> {
+                                    System.out.println("INVOKESTATIC: " + i.owner().asInternalName());
+                                    deps.add(i.owner().asInternalName());
+                                }
+                                case INVOKEINTERFACE -> {
+                                    System.out.println("INVOKEINTERFACE: " + i.owner().asInternalName());
+                                    deps.add(i.owner().asInternalName());
+                                }
+                                case INVOKESPECIAL -> {
+                                    System.out.println("INVOKESPECIAL: " + i.owner().asInternalName());
+                                    deps.add(i.owner().asInternalName());
+                                }
+                                default -> {}
+                            }
+                        }
                         default -> {}
                     }
                 }
