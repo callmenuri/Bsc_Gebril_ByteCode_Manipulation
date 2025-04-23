@@ -10,9 +10,6 @@ import java.util.Set;
 
 public class DependencyAnalyzer {
 
-    private static ClassFile classFile;
-    private static CodeElement[] code;
-
     public static Set<String> collectDependencies(byte[] classFile) {
         Set<String> deps = new HashSet<>();
         ClassModel classModel = ClassFile.of().parse(classFile);
@@ -57,24 +54,6 @@ public class DependencyAnalyzer {
                 }
             });
         }
-/*
-        for (MethodModel method : classModel.methods()) {
-            method.code().ifPresent(code -> {
-                for (CodeElement e : code.elements()) {
-                    switch (e) {
-                        case FieldInstruction f -> deps.add(getClassName(f.owner()));
-                        case InvokeInstruction i -> deps.add(getClassName(i.owner()));
-                        case ConstantInstruction ci when ci.constantValue() instanceof ClassEntry ce ->
-                                deps.add(getClassName(ce));
-                        // Du kannst hier weitere Instruktionen ergänzen
-                        default -> {
-                            // ignorieren
-                        }
-                    }
-                }
-            });
-        }
-*/
         return deps;
     }
 

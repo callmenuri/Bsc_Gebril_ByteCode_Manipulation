@@ -6,7 +6,8 @@ public class SecureService {
     public void secureMethod() {
         System.out.println("Sichere Methode wird ausgeführt.");
     }
-    public void secureMethod(int i) {
+    @Secure
+    public void secureMethodTest(int i) {
         System.out.println("Sichere Methode wird ausgeführt. Mit einem Parameter");
     }
     public void normalMethod() {
