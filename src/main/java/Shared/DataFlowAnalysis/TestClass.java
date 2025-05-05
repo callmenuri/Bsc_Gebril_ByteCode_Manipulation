@@ -28,3 +28,4 @@ public class TestClass {
         obj.testMethod(false);
     }
 }
+

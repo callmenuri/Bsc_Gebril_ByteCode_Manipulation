@@ -8,14 +8,17 @@ import java.util.function.Function;
 public class JavassistGreetingInterceptor {
 
     public static void main(String[] args) throws Exception {
-        // Erstelle die Javassist-Klasse
+        Class<?> dynamicClass = returnClass();
+        Function<String, String> function = (Function<String, String>) dynamicClass.getDeclaredConstructor().newInstance();
+        // Teste die Funktion
+        System.out.println(function.apply("Javassist")); // Erwartet: "Hello from Javassist: Javassist"
+    }
+
+
+    public static byte[] getByteCode() throws Exception {
         ClassPool pool = ClassPool.getDefault();
         CtClass ctClass = pool.makeClass("JavassistDynamicFunction");
-
-        // Füge das Function-Interface hinzu
         ctClass.addInterface(pool.get(Function.class.getName()));
-
-        // Erstelle die Methode "apply"
         CtMethod applyMethod = new CtMethod(
                 pool.get(Object.class.getName()), // Rückgabetyp
                 "apply",                          // Methodenname
@@ -23,7 +26,6 @@ public class JavassistGreetingInterceptor {
                 ctClass
         );
 
-        // Setze den Methodenkörper
         applyMethod.setBody(
                 "{ " +
                         "if (!($1 instanceof String)) { " +
@@ -33,22 +35,20 @@ public class JavassistGreetingInterceptor {
                         "}"
         );
 
-        // Füge die Methode der Klasse hinzu
         ctClass.addMethod(applyMethod);
-
-        // Lade die Klasse mit einem benutzerdefinierten ClassLoader
         byte[] byteCode = ctClass.toBytecode();
+        return byteCode;
+    }
+
+    public static Class<?> returnClass() throws Exception{
+        byte[] byteCode = getByteCode();
         Class<?> dynamicClass = new ClassLoader() {
             public Class<?> defineClass(String name, byte[] b) {
                 return super.defineClass(name, b, 0, b.length);
             }
-        }.defineClass(ctClass.getName(), byteCode);
-
-        // Erstelle eine Instanz der dynamischen Klasse
-        @SuppressWarnings("unchecked")
-        Function<String, String> function = (Function<String, String>) dynamicClass.getDeclaredConstructor().newInstance();
-
-        // Teste die Funktion
-        System.out.println(function.apply("Javassist")); // Erwartet: "Hello from Javassist: Javassist"
+        }.defineClass("JavassistDynamicFunction", byteCode);
+        return dynamicClass;
     }
+
+
 }

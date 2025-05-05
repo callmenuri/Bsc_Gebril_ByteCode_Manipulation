@@ -24,4 +24,17 @@ public class ByteBuddyGreetingInterceptor {
         // Testfälle
         System.out.println(function.apply("Byte Buddy")); // Erwartet: "Hello from Byte Buddy: Byte Buddy"
     }
+
+
+    public Class<?> getDynamicClass() {
+        Class<? extends Function> dynamicType = new ByteBuddy()
+                .subclass(Function.class) // Implementiere das Interface Function
+                .method(ElementMatchers.named("apply")) // Interceptiere die Methode "apply"
+                .intercept(MethodDelegation.to(new ByteBuddyInterceptor())) // Delegiere an den Interceptor
+                .make()
+                .load(ByteBuddyGreetingInterceptor.class.getClassLoader())
+                .getLoaded();
+
+        return dynamicType;
+    }
 }

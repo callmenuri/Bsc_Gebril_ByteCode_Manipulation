@@ -2,12 +2,18 @@ package BCEL.MockedClass;
 import org.apache.bcel.Constants;
 import org.apache.bcel.generic.*;
 import org.apache.bcel.classfile.JavaClass;
+import org.openjdk.jmh.annotations.*;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 public class BCELMockExample {
 
     public static void main(String[] args) throws Exception {
+        mockMethod();
+    }
+
+    public static void mockMethod() {
         //Set Classname and Superclass
         String className = "MockedClass";
         String superClassName = "java.lang.Object";
@@ -45,12 +51,12 @@ public class BCELMockExample {
         Class<?> loadedClass = new CustomClassLoader().defineClass(className, byteCode);
 
         // 7. Instanz erstellen und Methode aufrufen
+        /*
         Object instance = loadedClass.getDeclaredConstructor().newInstance();
         Method method = loadedClass.getMethod("mockMethod");
         String result = (String) method.invoke(instance);
 
-        // 8. Ausgabe
-        System.out.println("Ergebnis der Mock-Methode: " + result);
+         */
     }
 
     // Eigener ClassLoader für das dynamische Laden der Klasse

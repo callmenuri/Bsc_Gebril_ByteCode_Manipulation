@@ -3,6 +3,8 @@ package Shared.Logging;
 public class MeasureTimeClass {
     @Timed
     public void sayHello(String name) {
+
+
         System.out.println("Hello," + name + " -  MeasureTimeClass");
         try {
             Thread.sleep(500);
@@ -10,4 +12,9 @@ public class MeasureTimeClass {
             Thread.currentThread().interrupt();
         }
     }
+
+    // Fehlender Standardkonstruktor wird hinzugefügt
+    public MeasureTimeClass() {
+    }
+
 }

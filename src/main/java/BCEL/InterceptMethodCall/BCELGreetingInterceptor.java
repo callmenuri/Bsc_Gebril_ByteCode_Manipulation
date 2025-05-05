@@ -8,6 +8,13 @@ import java.util.function.Function;
 public class BCELGreetingInterceptor {
 
     public static void main(String[] args) throws Exception {
+
+        Class<?> dynamicClass = getGreetingClass();
+        Function<String, String> function = (Function<String, String>) dynamicClass.getDeclaredConstructor().newInstance();
+        System.out.println(function.apply("BCEL")); // Erwartet: "Hello from BCEL: BCEL"
+    }
+
+    public static byte[] getByteCode(){
         // Erstelle eine neue Klasseninstanz
         ClassGen cg = new ClassGen("BCELDynamicFunction", "java.lang.Object",
                 "<generated>", Constants.ACC_PUBLIC | Constants.ACC_SUPER,
@@ -74,15 +81,17 @@ public class BCELGreetingInterceptor {
         // Erzeuge die Klasse und lade sie
         JavaClass jc = cg.getJavaClass();
         byte[] byteCode = jc.getBytes();
+
+        return byteCode;
+    }
+
+    public static Class<?> getGreetingClass(){
+        byte[] byteCode = getByteCode();
         Class<?> dynamicClass = new ClassLoader() {
             public Class<?> defineClass(String name, byte[] b) {
                 return super.defineClass(name, b, 0, b.length);
             }
         }.defineClass("BCELDynamicFunction", byteCode);
-
-        // Instanz erstellen und testen
-        @SuppressWarnings("unchecked")
-        Function<String, String> function = (Function<String, String>) dynamicClass.getDeclaredConstructor().newInstance();
-        System.out.println(function.apply("BCEL")); // Erwartet: "Hello from BCEL: BCEL"
+        return dynamicClass;
     }
 }

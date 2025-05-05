@@ -1,13 +1,28 @@
 package ASM.SecurityExample;
 import org.objectweb.asm.*;
+import org.openjdk.jmh.annotations.*;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+
+
 
 public class SecureClassModifier extends ClassLoader {
+
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("Starting");
+        org.openjdk.jmh.Main.main( args);
+        System.out.println("Finished");
+    }
+
+
+    /*
     public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         String className = "target/classes/Shared/SecurityExample/SecureService";
         byte[] classBytes = Files.readAllBytes(Paths.get(className + ".class"));
@@ -40,6 +55,19 @@ public class SecureClassModifier extends ClassLoader {
 
         Method normalMethod = modifiedClaz.getMethod("normalMethod");
         normalMethod.invoke(instance);
+    }
+
+     */
+
+    public Class<?> benchmarks() throws Exception {
+        String className = "target/classes/Shared/SecurityExample/SecureService";
+        byte[] classBytes = Files.readAllBytes(Paths.get(className + ".class"));
+
+        ClassReader cr = new ClassReader(classBytes);
+        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        SecureMethodTransformer transformer = new SecureMethodTransformer(cw, className);
+        cr.accept(transformer, ClassReader.EXPAND_FRAMES);
+        return classBytes.getClass();
     }
 }
 

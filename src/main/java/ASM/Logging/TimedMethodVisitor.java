@@ -23,7 +23,7 @@ public class TimedMethodVisitor extends MethodVisitor {
         if(isTimed){
             // Startzeit speichern (Slots 2 und 3 für long)
             mv.visitMethodInsn(INVOKESTATIC, "java/lang/System", "nanoTime", "()J", false);
-            mv.visitVarInsn(LSTORE, 3); // Speicher in Slot 2 und 3
+            mv.visitVarInsn(LSTORE, 3); //
         }
         super.visitCode();
     }

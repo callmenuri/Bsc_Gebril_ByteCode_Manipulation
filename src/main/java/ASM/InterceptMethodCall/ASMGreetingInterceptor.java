@@ -4,6 +4,8 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.function.Function;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -13,7 +15,13 @@ public class ASMGreetingInterceptor {
     public static void main(String[] args) throws Exception {
         // Bytecode-Generierung mit ASM
         byte[] classBytes = generateDynamicFunctionClass();
+        try (var out = new FileOutputStream("src/main/java/ASM/InterceptMethodCall/InvokeMockedClass.class")) {
+            out.write(classBytes);
+            System.out.println("Fertig");
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         // Klasse laden
         CustomClassLoader loader = new CustomClassLoader();
         Class<?> dynamicClass = loader.defineClass("DynamicFunction", classBytes);
@@ -80,5 +88,12 @@ public class ASMGreetingInterceptor {
         public Class<?> defineClass(String name, byte[] bytecode) {
             return super.defineClass(name, bytecode, 0, bytecode.length);
         }
+    }
+
+    public Class<?> returnClass() {
+        byte[] classBytes = generateDynamicFunctionClass();
+        CustomClassLoader loader = new CustomClassLoader();
+        Class<?> dynamicClass = loader.defineClass("DynamicFunction", classBytes);
+        return dynamicClass;
     }
 }

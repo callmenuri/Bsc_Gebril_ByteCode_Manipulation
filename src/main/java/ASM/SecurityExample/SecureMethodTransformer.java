@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import static org.objectweb.asm.Opcodes.*;
 
+
 public class SecureMethodTransformer extends ClassVisitor {
     private final String className;
 

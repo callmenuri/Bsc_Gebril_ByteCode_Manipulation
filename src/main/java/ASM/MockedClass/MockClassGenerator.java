@@ -1,12 +1,23 @@
 package ASM.MockedClass;
 import org.objectweb.asm.*;
+import org.openjdk.jmh.annotations.*;
+
 import static org.objectweb.asm.Opcodes.*;
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 
 public class MockClassGenerator {
 
+
     public static void main(String[] args) throws Exception {
+        createMockedClass();
+    }
+
+
+
+    //@Benchmark
+    public static void createMockedClass() {
         // 1. Erstelle ClassWriter mit automatischer Frame-Berechnung
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 
@@ -38,13 +49,13 @@ public class MockClassGenerator {
         Class<?> mockedClass = new CustomClassLoader().defineClass(className, bytecode);
 
         // 6. Instanz der MockedClass erstellen
-        Object instance = mockedClass.getDeclaredConstructor().newInstance();
+        //Object instance = mockedClass.getDeclaredConstructor().newInstance();
 
         // 7. mockMethod aufrufen
-        Method mockMethod = mockedClass.getMethod("mockMethod");
-        String result = (String) mockMethod.invoke(instance);
+        // Method mockMethod = mockedClass.getMethod("mockMethod");
+        // String result = (String) mockMethod.invoke(instance);
 
-        System.out.println("Ergebnis der Mock-Methode: " + result);
+        //System.out.println("Ergebnis der Mock-Methode: " + result);
     }
 
     // Eigener ClassLoader, um die generierte Klasse zu laden

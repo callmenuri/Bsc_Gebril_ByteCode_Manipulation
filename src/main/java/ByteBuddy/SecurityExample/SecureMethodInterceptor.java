@@ -7,6 +7,7 @@ import net.bytebuddy.asm.Advice;
 import net.bytebuddy.matcher.ElementMatchers;
 import java.lang.reflect.Method;
 import net.bytebuddy.agent.ByteBuddyAgent;
+import org.openjdk.jmh.annotations.Benchmark;
 
 public class SecureMethodInterceptor {
 
@@ -21,9 +22,11 @@ public class SecureMethodInterceptor {
     }
 
     public static void main(String[] args) throws Exception {
+        securityCheckBenchmark();
+    }
 
+    public static void securityCheckBenchmark() {
         ByteBuddyAgent.install();
-
         new AgentBuilder.Default()
                 .type(ElementMatchers.any())
                 .transform((builder, typeDescription, classLoader, module, protectionDomain) ->
@@ -33,9 +36,8 @@ public class SecureMethodInterceptor {
                 .installOnByteBuddyAgent();
 
         SecureService service = new SecureService();
-
         try {
-            //Should throw an Exception
+            //Should throw an Exception if Session is == false
             service.secureMethod();
         } catch (SecurityException e) {
             System.out.println(e.getMessage());
