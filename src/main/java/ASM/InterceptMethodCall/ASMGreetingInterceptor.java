@@ -3,14 +3,21 @@ package ASM.InterceptMethodCall;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.openjdk.jmh.annotations.*;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Opcodes.ATHROW;
-
+@State(Scope.Thread)
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@Fork(1)
+@Warmup(iterations = 5)
+@Measurement(iterations = 100)
 public class ASMGreetingInterceptor {
     public static void main(String[] args) throws Exception {
         // Bytecode-Generierung mit ASM
@@ -31,7 +38,8 @@ public class ASMGreetingInterceptor {
         System.out.println(function.apply("ASM"));
     }
 
-    private static byte[] generateDynamicFunctionClass() {
+    //@Benchmark
+    public static byte[] generateDynamicFunctionClass() {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         MethodVisitor mv;
 
@@ -90,6 +98,7 @@ public class ASMGreetingInterceptor {
         }
     }
 
+    //@Benchmark
     public Class<?> returnClass() {
         byte[] classBytes = generateDynamicFunctionClass();
         CustomClassLoader loader = new CustomClassLoader();

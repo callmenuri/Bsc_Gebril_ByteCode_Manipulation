@@ -3,6 +3,9 @@ import org.objectweb.asm.*;
 import org.openjdk.jmh.annotations.*;
 
 import static org.objectweb.asm.Opcodes.*;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
@@ -17,7 +20,7 @@ public class MockClassGenerator {
 
 
     //@Benchmark
-    public static void createMockedClass() {
+    public static void createMockedClass() throws Exception {
         // 1. Erstelle ClassWriter mit automatischer Frame-Berechnung
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 
@@ -47,7 +50,9 @@ public class MockClassGenerator {
         // 5. Generierte Klasse laden
         byte[] bytecode = cw.toByteArray();
         Class<?> mockedClass = new CustomClassLoader().defineClass(className, bytecode);
-
+        try (var out = new FileOutputStream("src/main/java/ASM/MockedClass/EditedClassFile.class")) {
+            out.write(bytecode);
+        }
         // 6. Instanz der MockedClass erstellen
         //Object instance = mockedClass.getDeclaredConstructor().newInstance();
 

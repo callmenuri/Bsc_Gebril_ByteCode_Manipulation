@@ -12,6 +12,7 @@ import static org.objectweb.asm.Opcodes.*;
 public class SubclassObjectBenchmark {
 
     public static byte[] generateEmptySubclass(String classNameInternal) {
+
         ClassWriter cw = new ClassWriter(0);
 
         cw.visit(

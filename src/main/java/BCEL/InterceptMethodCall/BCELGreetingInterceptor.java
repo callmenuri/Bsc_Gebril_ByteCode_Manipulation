@@ -2,9 +2,17 @@ package BCEL.InterceptMethodCall;
 import org.apache.bcel.Constants;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.*;
+import org.openjdk.jmh.annotations.*;
+
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-
+@State(Scope.Thread)
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@Fork(1)
+@Warmup(iterations = 5)
+@Measurement(iterations = 100)
 public class BCELGreetingInterceptor {
 
     public static void main(String[] args) throws Exception {
@@ -14,6 +22,7 @@ public class BCELGreetingInterceptor {
         System.out.println(function.apply("BCEL")); // Erwartet: "Hello from BCEL: BCEL"
     }
 
+    //@Benchmark
     public static byte[] getByteCode(){
         // Erstelle eine neue Klasseninstanz
         ClassGen cg = new ClassGen("BCELDynamicFunction", "java.lang.Object",
@@ -85,6 +94,7 @@ public class BCELGreetingInterceptor {
         return byteCode;
     }
 
+   // @Benchmark
     public static Class<?> getGreetingClass(){
         byte[] byteCode = getByteCode();
         Class<?> dynamicClass = new ClassLoader() {

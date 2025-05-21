@@ -10,7 +10,7 @@ public class ExampleClass {
      * @param arg An argument.
      * @return The input argument.
      */
-    public boolean method(boolean arg) {
+    public boolean method1(boolean arg) {
         return arg;
     }
 

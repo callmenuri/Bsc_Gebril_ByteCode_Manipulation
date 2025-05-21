@@ -1,18 +1,32 @@
 package Javassist.InterceptMethodCall;
 
 import javassist.*;
+import org.openjdk.jmh.annotations.*;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-
+@State(Scope.Thread)
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@Fork(1)
+@Warmup(iterations = 5)
+@Measurement(iterations = 100)
 public class JavassistGreetingInterceptor {
 
+
     public static void main(String[] args) throws Exception {
+        System.out.println("Starting");
+        org.openjdk.jmh.Main.main( args);
+        System.out.println("Finished");
+    }
+
+ /*   public static void main(String[] args) throws Exception {
         Class<?> dynamicClass = returnClass();
         Function<String, String> function = (Function<String, String>) dynamicClass.getDeclaredConstructor().newInstance();
         // Teste die Funktion
         System.out.println(function.apply("Javassist")); // Erwartet: "Hello from Javassist: Javassist"
-    }
+    }*/
 
 
     public static byte[] getByteCode() throws Exception {
@@ -37,9 +51,11 @@ public class JavassistGreetingInterceptor {
 
         ctClass.addMethod(applyMethod);
         byte[] byteCode = ctClass.toBytecode();
+        ctClass.detach();
         return byteCode;
     }
 
+    //@Benchmark
     public static Class<?> returnClass() throws Exception{
         byte[] byteCode = getByteCode();
         Class<?> dynamicClass = new ClassLoader() {
@@ -49,6 +65,4 @@ public class JavassistGreetingInterceptor {
         }.defineClass("JavassistDynamicFunction", byteCode);
         return dynamicClass;
     }
-
-
 }
