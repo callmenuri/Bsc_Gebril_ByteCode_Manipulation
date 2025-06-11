@@ -3,6 +3,7 @@ package Javassist.InterceptMethodCall;
 import javassist.*;
 import org.openjdk.jmh.annotations.*;
 
+import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -15,18 +16,24 @@ import java.util.function.Function;
 public class JavassistGreetingInterceptor {
 
 
-    public static void main(String[] args) throws Exception {
+    /*public static void main(String[] args) throws Exception {
         System.out.println("Starting");
         org.openjdk.jmh.Main.main( args);
         System.out.println("Finished");
     }
-
- /*   public static void main(String[] args) throws Exception {
+*/
+    public static void main(String[] args) throws Exception {
         Class<?> dynamicClass = returnClass();
         Function<String, String> function = (Function<String, String>) dynamicClass.getDeclaredConstructor().newInstance();
         // Teste die Funktion
         System.out.println(function.apply("Javassist")); // Erwartet: "Hello from Javassist: Javassist"
-    }*/
+
+        try (var out = new FileOutputStream("src/main/java/Javassist/InterceptMethodCall/Intercept.class")) {
+            out.write(getByteCode());
+            System.out.println("Fertig");
+
+        }
+    }
 
 
     public static byte[] getByteCode() throws Exception {

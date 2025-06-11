@@ -8,8 +8,6 @@ public class ByteBuddyInterceptor {
         if (!(input instanceof String)) {
             throw new IllegalArgumentException("Input must be a String");
         }
-
-        // Verarbeitung und Rückgabe
         return "Hello from Byte Buddy: " + input;
     }
 }

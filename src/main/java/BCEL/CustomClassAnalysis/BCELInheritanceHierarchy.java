@@ -33,7 +33,7 @@ public class BCELInheritanceHierarchy {
         List<String> hierarchy = new ArrayList<>();
         int depth = 0;
 
-        String currentClass = className.replace('.', '/'); // BCEL verwendet "/" statt "." in Klassennamen
+        String currentClass = className.replace('.', '/');
 
         while (currentClass != null) {
 
@@ -41,9 +41,6 @@ public class BCELInheritanceHierarchy {
                     .getContextClassLoader()
                     .getResourceAsStream(currentClass + ".class");
 
-            if (inputStream == null) {
-                throw new RuntimeException("Klasse nicht im Classpath gefunden: " + currentClass);
-            }
             ClassParser parser = new ClassParser(inputStream, currentClass);
             JavaClass javaClass = parser.parse();
 

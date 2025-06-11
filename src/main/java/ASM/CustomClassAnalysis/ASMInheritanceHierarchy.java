@@ -32,23 +32,19 @@ public class ASMInheritanceHierarchy {
 
         String currentClass = className.replace('.', '/');
 
-        //Iteration of class
         while (currentClass != null) {
             hierarchy.add(currentClass.replace('/', '.'));
             depth++;
-            // Reading current class
+
             ClassReader classReader = new ClassReader(currentClass);
-            // Super Class Visitor
             SuperClassVisitor visitor = new SuperClassVisitor();
             classReader.accept(visitor, 0);
-            // Set Superclass for next Iteration
             currentClass = visitor.getSuperClass();
         }
 
         return new HierarchyResult(hierarchy, depth);
     }
 
-    // Custom ClassVisitor for finding the Superclass
     private static class SuperClassVisitor extends ClassVisitor {
         private String superClass;
 

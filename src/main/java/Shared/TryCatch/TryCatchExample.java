@@ -9,6 +9,6 @@ public class TryCatchExample {
 
     public static void main(String[] args) {
         TryCatchExample beispiel = new TryCatchExample();
-        beispiel.divide(10, 0);  // Dies wird normalerweise einen Fehler verursachen.
+        beispiel.divide(10, 0);
     }
 }

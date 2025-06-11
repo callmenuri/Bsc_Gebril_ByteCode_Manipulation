@@ -34,7 +34,7 @@ public class AddingInterfaces {
 
         ClassTransform ct = (builder, element) -> {
             builder.withInterfaceSymbols(interfaceToAdd);
-            builder.accept(element);
+            builder.with(element);
         };
 
         var cc = ClassFile.of();

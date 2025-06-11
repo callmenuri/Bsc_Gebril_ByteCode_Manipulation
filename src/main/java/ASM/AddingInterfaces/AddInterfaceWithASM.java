@@ -33,7 +33,6 @@ public class AddInterfaceWithASM {
                 String[] newInterfaces = new String[interfaces.length + 1];
                 System.arraycopy(interfaces, 0, newInterfaces, 0, interfaces.length);
                 newInterfaces[interfaces.length] = "java/io/Serializable";
-
                 super.visit(version, access, name, signature, superName, newInterfaces);
             }
         };

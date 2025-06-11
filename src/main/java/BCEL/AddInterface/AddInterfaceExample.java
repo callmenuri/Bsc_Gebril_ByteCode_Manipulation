@@ -22,14 +22,15 @@ public class AddInterfaceExample {
         JavaClass original = Repository.lookupClass(className);
         ClassGen cg = new ClassGen(original);
 
-        String[] interfaces = cg.getInterfaceNames();
+        /*String[] interfaces = cg.getInterfaceNames();
         String[] newInterfaces = new String[interfaces.length + 1];
         System.arraycopy(interfaces, 0, newInterfaces, 0, interfaces.length);
         newInterfaces[interfaces.length] = "java.io.Serializable";
         for (String interfaze : newInterfaces) {
             cg.addInterface(interfaze);
-        }
-
+        }*/
+        String interfaceName = "java.io.Serializable";
+        cg.addInterface("java.io.Serializable");
         JavaClass modified = cg.getJavaClass();
         modified.dump(className + ".class");
 

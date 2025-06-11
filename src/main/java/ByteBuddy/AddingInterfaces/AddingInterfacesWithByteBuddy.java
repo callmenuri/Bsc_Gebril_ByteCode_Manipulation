@@ -1,7 +1,7 @@
 package ByteBuddy.AddingInterfaces;
 import Shared.AddingInterfaces.MyClass;
 import net.bytebuddy.implementation.MethodDelegation;
-
+import net.bytebuddy.description.modifier.Visibility;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +11,8 @@ import java.lang.classfile.ClassTransform;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.ConstantDescs;
 import java.lang.constant.MethodTypeDesc;
+
+import static net.bytebuddy.description.modifier.Visibility.PUBLIC;
 
 public class AddingInterfacesWithByteBuddy {
     public static void main(String[] args) throws Exception {
@@ -23,6 +25,7 @@ public class AddingInterfacesWithByteBuddy {
     public static byte[] secondAttemptWithClassFileAPI(String classname) throws Exception {
         return new ByteBuddy()
                 .redefine(MyClass.class)
+                .defineField("newField", int.class, Visibility.PRIVATE)
                 .implement(Serializable.class)
                 .make()
                 .getBytes();

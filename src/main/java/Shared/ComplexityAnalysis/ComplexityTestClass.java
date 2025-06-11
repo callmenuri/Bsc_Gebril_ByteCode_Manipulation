@@ -47,7 +47,6 @@ public class ComplexityTestClass {
     }
 
     public void complexMethod(int value, int limit) {
-        // Kombination aus Verzweigungen und Schleifen
         if (value > 0) {
             for (int i = 0; i < limit; i++) {
                 if (i % 2 == 0) {

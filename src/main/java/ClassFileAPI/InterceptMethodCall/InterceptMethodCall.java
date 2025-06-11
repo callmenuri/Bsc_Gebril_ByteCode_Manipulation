@@ -36,26 +36,31 @@ import static java.lang.constant.ConstantDescs.*;
 @Measurement(iterations = 100)
 public class InterceptMethodCall {
 
-    public static void main(String[] args) throws Exception {
+    /*public static void main(String[] args) throws Exception {
         System.out.println("Starting");
         org.openjdk.jmh.Main.main( args);
         System.out.println("Finished");
-    }
+    }*/
 
 
-/*public static void main(String[] args) throws Exception {
+public static void main(String[] args) throws Exception {
     byte[] bytes = generateDynamicClass();
   CustomClassLoader loader = new CustomClassLoader();
   Class<?> dynamicClass = loader.defineClass("DynamicFunction", bytes);
     Object instance = dynamicClass.getDeclaredConstructor().newInstance();
     Method toString = dynamicClass.getMethod("apply", Object.class);
-    System.out.println(toString.invoke(instance, "Test")); // Ausgabe: Hello World!
+    System.out.println(toString.invoke(instance, "Ausgabe")); // Ausgabe: Hello World!
+    try (var out = new FileOutputStream("src/main/java/ClassFileAPI/InterceptMethodCall/Intercept.class")) {
+        out.write(bytes);
+        System.out.println("Fertig");
 
-}*/
+    }
+}
 //@Benchmark
-public static Class<?> returnClass() {
+public static Class<?> returnClass() throws Exception {
     byte[] bytes = generateDynamicClass();
     CustomClassLoader loader = new CustomClassLoader();
+
     Class<?> dynamicClass = loader.defineClass("DynamicFunction", bytes);
     return dynamicClass;
 }
@@ -78,22 +83,20 @@ public static Class<?> returnClass() {
                                         .return_())
 
 
-                        .withMethodBody("apply",  MethodTypeDesc.of( // Methodensignatur
-                                        of("java.lang.Object"), // Rückgabewert (Object)
-                                        of("java.lang.Object")  // Parameter (Object)
-                                )
-                                , ClassFile.ACC_PUBLIC,
+                        .withMethodBody(
+                                "apply",
+                                MethodTypeDesc.of( CD_Object,CD_Object),
+                                ClassFile.ACC_PUBLIC,
                                 cob -> cob
                                         .aload(1)
-                                        .instanceof_(ClassDesc.of("java.lang.String"))
-                                        .ifThenElse(
-                                                c1 -> c1
+                                        .instanceof_(CD_String)
+                                        .ifThenElse(c1 -> c1
                                                         .aload(1)
-                                                        .checkcast(ClassDesc.of("java.lang.String"))
+                                                        .checkcast(CD_String)
                                                         .ldc("Hallo von Class-File API: ")
                                                         .swap()
                                                         .invokevirtual(
-                                                                ClassDesc.of("java.lang.String"),
+                                                                CD_String,
                                                                 "concat",
                                                                 MethodTypeDesc.of(
                                                                         CD_String,            // Rückgabetyp: void
@@ -102,18 +105,17 @@ public static Class<?> returnClass() {
                                                         )
                                                         .areturn()
 
-                                                ,
-                                                c2 -> {
-                                                    var owner = ClassDesc.of(SecurityException.class.getName());
-                                                    MethodTypeDesc methodTypeDesc = MethodTypeDesc.of(
+                                                , c2 -> {
+                                            var exception = ClassDesc.of(IllegalArgumentException.class.getName());
+                                            MethodTypeDesc methodTypeDesc = MethodTypeDesc.of(
                                                             ConstantDescs.CD_void,            // Rückgabetyp: void
                                                             ConstantDescs.CD_String           // Parameter: java.lang.String
                                                     );
 
-                                                    c2.new_(owner);
+                                                    c2.new_(exception);
                                                     c2.dup();
-                                                    c2.ldc("Zugriff verweigert: Benutzer hat keine Berechtigung.");
-                                                    c2.invokespecial(owner, "<init>", methodTypeDesc);
+                                                    c2.ldc("Input muss ein String sein!");
+                                                    c2.invokespecial(exception, "<init>", methodTypeDesc);
                                                     c2.athrow();
                                                 }
 

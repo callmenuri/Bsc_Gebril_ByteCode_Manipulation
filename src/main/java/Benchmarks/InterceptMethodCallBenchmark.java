@@ -57,7 +57,7 @@ public class InterceptMethodCallBenchmark {
 /*        System.out.println("Starting Test Benchmarks");
         org.openjdk.jmh.Main.main( args);
         System.out.println("Finished");*/
-      byte[] newBytes =  benchmarkClassFileAPI();
+      byte[] newBytes =  secondAttemptWithClassFileAPI();
         try (var out = new FileOutputStream("src/main/java/Benchmarks/ExampleClasses/EditedClassFile.class")) {
             out.write(newBytes);
         }

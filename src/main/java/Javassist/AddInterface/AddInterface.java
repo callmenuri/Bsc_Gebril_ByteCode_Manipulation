@@ -23,10 +23,10 @@ public class AddInterface {
         CtClass ctClass = pool.get(className);
 
         CtClass serializable = pool.get("java.io.Serializable");
-
-        if (!ctClass.subtypeOf(serializable)) {
+        ctClass.addInterface(serializable);
+        /*if (!ctClass.subtypeOf(serializable)) {
             ctClass.addInterface(serializable);
-        }
+        }*/
 
         ctClass.detach();
         return ctClass.toBytecode();
