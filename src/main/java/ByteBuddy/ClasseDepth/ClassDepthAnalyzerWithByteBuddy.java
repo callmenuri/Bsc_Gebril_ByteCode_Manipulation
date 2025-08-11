@@ -17,6 +17,7 @@ public class ClassDepthAnalyzerWithByteBuddy {
             // Starte bei der aktuellen Klasse
             TypeDescription currentType = resolution.resolve();
 
+
             // Durchlaufe die Superklassen
             while (currentType != null && !currentType.getName().equals("java.lang.Object")) {
                 depth++;

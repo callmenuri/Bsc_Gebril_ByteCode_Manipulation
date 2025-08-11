@@ -23,21 +23,31 @@ public class SecurityExampleWithTransformers {
         ClassModel classModel = ClassFile.of().parse(classBytes);
 
 
+        MethodTransform securedMethod = (methodBuilder, me) -> {
+            methodBuilder.with(me);
+        };
+
+
 
         CodeTransform addSecurityCheck = (codeBuilder, e) -> {
             codeBuilder.invokestatic(ClassDesc.of(UserSession.class.getName()), "hasAccess", MethodTypeDesc.of(CD_Boolean));
             int localVarIndex = 0;
-            Label startScope = codeBuilder.newLabel();
-            Label endScope = codeBuilder.newLabel();
-            var accessVar = codeBuilder.localVariable(localVarIndex, "access", CD_Boolean, startScope, endScope);
+            Label accessGranted = codeBuilder.newLabel();
+            Label accessDenied = codeBuilder.newLabel();
+
+            var accessVar = codeBuilder.localVariable(localVarIndex, "access", CD_Boolean, accessGranted, accessDenied);
             codeBuilder.istore(localVarIndex);
-            codeBuilder.labelBinding(startScope);
+            codeBuilder.labelBinding(accessGranted);
             accessVar.iload(0);
             codeBuilder
                     .ifThenElse(
-                            b1 ->  b1.accept(e)
+                            b1 -> {
+                                //b1.goto_(accessGranted);
+                                b1.accept(e);
+                            }
                             ,
                             b2 -> {
+                                b2.labelBinding(accessDenied); // Bind accessDenied
                                 var owner = ClassDesc.of(SecurityException.class.getName());
                                 MethodTypeDesc methodTypeDesc = MethodTypeDesc.of(
                                         ConstantDescs.CD_void,            // Rückgabetyp: void
@@ -53,7 +63,8 @@ public class SecurityExampleWithTransformers {
                             })
                     .ireturn();
 
-            codeBuilder.labelBinding(endScope);
+            codeBuilder.labelBinding(accessGranted);
+            codeBuilder.with(e);
         };
 
 
@@ -71,7 +82,7 @@ public class SecurityExampleWithTransformers {
         var cc = ClassFile.of();
         byte[] newBytes = cc.transform(cc.parse(classBytes), ct);
 
-        try (var out = new FileOutputStream("src/main/java/ClassFileAPI/SecurityExample/EditedClassFile2.class")) {
+        try (var out = new FileOutputStream("src/main/java/ClassFileAPI/SecurityExample/EditedClassFile3.class")) {
             out.write(newBytes);
         }
     }

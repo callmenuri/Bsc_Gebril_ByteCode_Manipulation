@@ -38,6 +38,7 @@ public class JavassistInheritanceHierarchy {
         while (currentClass != null) {
             hierarchy.add(currentClass.getName());
             currentClass = currentClass.getSuperclass();
+
             depth++;
         }
 

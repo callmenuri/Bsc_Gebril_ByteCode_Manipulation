@@ -19,6 +19,10 @@ public class AddTryCatchExample extends ClassLoader implements Opcodes {
         // Lade die Klasse ohne sie zu initialisieren
         byte[] classData = modifyClass(className);
 
+        try (var out = new FileOutputStream("src/main/java/ASM/TryCatch/EditedClassFile3.class")) {
+            out.write(classData);
+        }
+
         // Erstelle eine neue Instanz des Custom ClassLoaders
         AddTryCatchExample loader = new AddTryCatchExample();
 

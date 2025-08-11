@@ -24,6 +24,7 @@ public class AddInterface {
 
         CtClass serializable = pool.get("java.io.Serializable");
         ctClass.addInterface(serializable);
+
         /*if (!ctClass.subtypeOf(serializable)) {
             ctClass.addInterface(serializable);
         }*/

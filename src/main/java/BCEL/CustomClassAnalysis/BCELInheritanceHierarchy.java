@@ -43,7 +43,6 @@ public class BCELInheritanceHierarchy {
 
             ClassParser parser = new ClassParser(inputStream, currentClass);
             JavaClass javaClass = parser.parse();
-
             hierarchy.add(javaClass.getClassName());
             depth++;
 

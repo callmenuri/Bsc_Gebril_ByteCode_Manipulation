@@ -15,14 +15,16 @@ import java.util.concurrent.TimeUnit;
 public class SecureClassModifier extends ClassLoader {
 
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("Starting");
-        org.openjdk.jmh.Main.main( args);
+/*    public static void main(String[] args) throws Exception {
+        byte[] benchmarks = benchmarks();
+        //org.openjdk.jmh.Main.main( args);
+        try (var out = new FileOutputStream("src/main/java/ASM/SecurityExample/EditedClassFile.class")) {
+            out.write(benchmarks);
+        }
         System.out.println("Finished");
-    }
+    }*/
 
 
-    /*
     public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         String className = "target/classes/Shared/SecurityExample/SecureService";
         byte[] classBytes = Files.readAllBytes(Paths.get(className + ".class"));
@@ -33,8 +35,8 @@ public class SecureClassModifier extends ClassLoader {
         cr.accept(transformer, ClassReader.EXPAND_FRAMES);
 
         byte[] modifiedClass = cw.toByteArray();
-        try (FileOutputStream fos = new FileOutputStream(className + "_Modified.class")) {
-            fos.write(modifiedClass);
+        try (var out = new FileOutputStream("src/main/java/ASM/SecurityExample/EditedClassFile.class")) {
+            out.write(modifiedClass);
         }
 
         System.out.println("Modifizierte Klasse gespeichert als " + className + "_Modified.class");
@@ -57,9 +59,8 @@ public class SecureClassModifier extends ClassLoader {
         normalMethod.invoke(instance);
     }
 
-     */
 
-    public Class<?> benchmarks() throws Exception {
+/*    public static byte[] benchmarks() throws Exception {
         String className = "target/classes/Shared/SecurityExample/SecureService";
         byte[] classBytes = Files.readAllBytes(Paths.get(className + ".class"));
 
@@ -67,7 +68,7 @@ public class SecureClassModifier extends ClassLoader {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         SecureMethodTransformer transformer = new SecureMethodTransformer(cw, className);
         cr.accept(transformer, ClassReader.EXPAND_FRAMES);
-        return classBytes.getClass();
-    }
+        return classBytes;
+    }*/
 }
 

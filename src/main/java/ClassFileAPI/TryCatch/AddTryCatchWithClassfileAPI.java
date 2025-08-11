@@ -30,33 +30,25 @@ public class AddTryCatchWithClassfileAPI {
                         for (MethodElement me : mm) {
                             if (me instanceof CodeModel codeModel) {
                                 methodBuilder.withCode(codeBuilder -> {
+                                    codeBuilder.trying(tryHandler ->{
+                                        codeModel.forEach(tryHandler::with);
+                                    }, catchBuilder -> {
+                                        catchBuilder.catching(ClassDesc.of("java.lang.ArithmeticException"), catchBlock -> {
+                                            catchBlock
+                                                    .getstatic(
+                                                            ClassDesc.of("java.lang.System"),   // Besitzerklasse (z. B. java/lang/System als ClassDesc)
+                                                            "out",                              // Name des feldes (z. B. "out")
+                                                            ClassDesc.of("java.io.PrintStream") // Typ des Feldes (z. B. java/io/PrintStream als ClassDesc)
+                                                    )
+
+                                                    .ldc("ArithmeticException abgefangen!")                      // Message laden
+                                                    .invokevirtual(  ClassDesc.of("java.io.PrintStream"), "println", MethodTypeDesc.of(CD_void, CD_String)) // Println aufrufen
+                                                    .return_(); // Rückgabe
+                                        });
+                                    });
+
                                     for (CodeElement e : codeModel) {
-                                        switch (e) {
-                                            case InvokeInstruction i  -> codeBuilder
-                                                    .trying(
-                                                            tryBlock -> {
-                                                                System.out.println("trying");
-                                                                tryBlock.invokevirtual(classModel.thisClass().asSymbol(), "divide", i.typeSymbol());
-                                                            },
-                                                            catchBuilder -> {
-                                                                // Füge einen Catch-Block hinzu
-                                                                catchBuilder
-                                                                        .catching(ClassDesc.of("java.lang.ArithmeticException"), catchBlock -> {
-                                                                            catchBlock
-                                                                                    .getstatic(
-                                                                                            ClassDesc.of("java.lang.System"),   // Besitzerklasse (z. B. java/lang/System als ClassDesc)
-                                                                                            "out",                              // Name des feldes (z. B. "out")
-                                                                                            ClassDesc.of("java.io.PrintStream") // Typ des Feldes (z. B. java/io/PrintStream als ClassDesc)
-                                                                                    )
-
-                                                                                    .ldc("ArithmeticException abgefangen!")                      // Message laden
-                                                                                    .invokevirtual(  ClassDesc.of("java.io.PrintStream"), "println", MethodTypeDesc.of(CD_void, CD_String)) // Println aufrufen
-                                                                                    .return_(); // Rückgabe
-                                                                        });
-                                                            });
-
-                                            default -> codeBuilder.with(e);
-                                        }
+                                        codeBuilder.with(e);
                                     }
 
                                 });
@@ -133,13 +125,56 @@ public class AddTryCatchWithClassfileAPI {
                 });
         ;
 
+        var classDescOfPrintStream =  ClassDesc.of("java.io.PrintStream");
+        var classDescOfPrintSystem =  ClassDesc.of("java.lang.System");
+        var classDescOfException =  ClassDesc.of("java.lang.ArithmeticException");
+        MethodTypeDesc methodTypeDesc = MethodTypeDesc.of(CD_void, CD_String);
+
+        MethodTransform tryingMethod = (methodBuilder, me) -> {
+            if (me instanceof CodeModel codeModel) {
+                methodBuilder.withCode(codeBuilder -> {
+                    codeBuilder.trying(tryHandler ->{
+                        codeModel.forEach(tryHandler::with);
+                    }, catchBuilder -> {
+                        catchBuilder.catching(classDescOfException, catchBlock -> {
+                            catchBlock
+                                    .getstatic(
+                                            classDescOfPrintSystem,
+                                            "out",
+                                            classDescOfPrintStream
+                                    )
+                                    .ldc("ArithmeticException abgefangen!")
+                                    .invokevirtual(classDescOfPrintStream, "println", methodTypeDesc)
+                                    .return_(); // Rückgabe
+                        });
+                    });
+
+                    codeModel.forEach(codeBuilder::with);
+                });
+            }
+            else methodBuilder.with(me);
+        };
+
+        byte[] newBytes2 = cf.build(classModel.thisClass().asSymbol(),
+                classBuilder -> {
+                    for (ClassElement e: classModel) {
+                        switch (e) {
+                            case MethodModel mm when mm.methodName().equalsString("divide") -> classBuilder.transformMethod(mm , tryingMethod);
+                            default -> {
+                                classBuilder.with(e);
+                            }
+                        }
+                    }
+                }
+        );
+
 
         var newClassBytes = ClassFile.of().transform(
                 classModel,
                 ClassTransform.transformingMethods(removeDebugInvocations));
 
         try (var out = new FileOutputStream("src/main/java/ClassFileAPI/EditedTryCatchMethod2.class")) {
-            out.write(newBytes);
+            out.write(newBytes2);
             System.out.println("Fertig");
         }
     }

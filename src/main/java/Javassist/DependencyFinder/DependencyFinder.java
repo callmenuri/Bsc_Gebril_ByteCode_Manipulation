@@ -43,15 +43,45 @@ public class DependencyFinder {
         // Annotationen an der Klasse prüfen
         AnnotationsAttribute classAttr = (AnnotationsAttribute) ctClass.getClassFile()
                 .getAttribute(AnnotationsAttribute.visibleTag);
+
         if (classAttr != null) {
             for (Annotation annotation : classAttr.getAnnotations()) {
                 analyzeAnnotation(className, annotation.getTypeName());
             }
         }
 
+        for (CtField field : ctClass.getDeclaredFields()) {
+            analyzeField(className, field);
+        }
+
+
         // Methoden prüfen
         for (CtMethod method : ctClass.getDeclaredMethods()) {
             analyzeMethod(className, method);
+        }
+    }
+
+    private static void analyzeField(String className, CtField field) {
+        try {
+            AnnotationsAttribute attr = (AnnotationsAttribute) field.getFieldInfo()
+                    .getAttribute(AnnotationsAttribute.visibleTag);
+            if (attr != null) {
+                for (Annotation annotation : attr.getAnnotations()) {
+                    analyzeAnnotation(className, annotation.getTypeName());
+                }
+            }
+
+            String fieldType = field.getType().getName();
+            System.out.println("External dependency Field: " + fieldType);
+            if (isExternalDependency(fieldType)) {
+                System.out.println("External dependency Field: " + fieldType);
+                externalDependencies.add(fieldType);
+            } else {
+                dependencyGraph.computeIfAbsent(className, k -> new HashSet<>()).add(fieldType);
+            }
+
+        } catch (NotFoundException e) {
+            System.err.println("Fehler bei der Analyse von Feld: " + field.getName() + " in " + className);
         }
     }
 

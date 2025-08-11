@@ -24,9 +24,11 @@ public class SecureClassModifierJavassist extends ClassLoader {
 
         byte[] modifiedClassBytes = ctClass.toBytecode();
         ctClass.detach();
-
+        ctClass.writeFile("src/main/java/Javassist/SecurityExample");
         SecureClassModifierJavassist loader = new SecureClassModifierJavassist();
         Class<?> modifiedClass = loader.defineClass(className, modifiedClassBytes, 0, modifiedClassBytes.length);
+
+
 
         Object instance = modifiedClass.getDeclaredConstructor().newInstance();
 

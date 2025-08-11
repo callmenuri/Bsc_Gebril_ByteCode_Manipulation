@@ -45,7 +45,6 @@ public class ComplexityAnalyzer {
 
         int branchCount = 0;
 
-        // Iteriere über die Instruktionen
         for (InstructionHandle handle : instructionList.getInstructionHandles()) {
             Instruction instruction = handle.getInstruction();
 

@@ -9,8 +9,7 @@ public class MethodLogger {
                              @Advice.Origin("#m") String methodName) {
         String callee = callerClass + "." + methodName;
         String caller = new Throwable().getStackTrace()[1].getClassName();
-
-        // Speichere den Aufruf im Abhängigkeitsgraphen
+        System.out.println("Calling " + callee + " from " + caller);
         DependencyFinder.logDependency(caller, callee);
     }
 }

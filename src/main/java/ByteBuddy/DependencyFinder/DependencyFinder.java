@@ -30,6 +30,7 @@ public class DependencyFinder {
                 .make()
                 .load(DependencyFinderExample.class.getClassLoader(), reloadingStrategy);
 
+
         // Testaufruf zum Überprüfen der Analyse
         DependencyFinderExample example = new DependencyFinderExample();
         example.hello();

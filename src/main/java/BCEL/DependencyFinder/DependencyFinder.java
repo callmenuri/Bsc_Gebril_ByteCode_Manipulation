@@ -56,17 +56,17 @@ public class DependencyFinder {
     private static void analyzeMethod(String className, Method method, ConstantPoolGen constantPoolGen) {
         MethodGen methodGen = new MethodGen(method, className, constantPoolGen);
         InstructionList instructionList = methodGen.getInstructionList();
+        AnnotationEntryGen[] annotationEntryGens = methodGen.getAnnotationEntries();
 
-        if (methodGen.getAnnotationEntries() != null) {
-            for (AnnotationEntryGen annotation : methodGen.getAnnotationEntries()) {
+        if (annotationEntryGens != null) {
+            for (AnnotationEntryGen annotation : annotationEntryGens) {
                 try {
                     Object annotationObject = annotation.getAnnotation();
                     if (annotationObject != null) {
                         analyzeAnnotation(className, String.valueOf(annotationObject));
                     }
                 } catch (Exception e) {
-                    System.err.println("Fehler beim Analysieren der Annotation in Methode: " + method.getName());
-                    e.printStackTrace();
+                    System.err.println(e.getMessage());
                 }
             }
         }

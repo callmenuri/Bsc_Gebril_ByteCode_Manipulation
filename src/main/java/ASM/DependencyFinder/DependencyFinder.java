@@ -16,7 +16,7 @@ public class DependencyFinder {
     public static void main(String[] args) throws IOException {
         String[] classFilePaths = {
                 "target/classes/Shared/DependencyFinder/DependencyFinderExample.class",
-                "target/classes/Shared/DependencyFinder/HelperService.class"
+               // "target/classes/Shared/DependencyFinder/HelperService.class"
         };
 
         for (String classFilePath : classFilePaths) {

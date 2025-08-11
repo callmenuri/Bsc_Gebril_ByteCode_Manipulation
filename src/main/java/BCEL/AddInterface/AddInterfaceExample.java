@@ -21,7 +21,7 @@ public class AddInterfaceExample {
 
         JavaClass original = Repository.lookupClass(className);
         ClassGen cg = new ClassGen(original);
-
+        
         /*String[] interfaces = cg.getInterfaceNames();
         String[] newInterfaces = new String[interfaces.length + 1];
         System.arraycopy(interfaces, 0, newInterfaces, 0, interfaces.length);
